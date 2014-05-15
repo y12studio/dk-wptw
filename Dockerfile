@@ -16,9 +16,11 @@ ADD ./configs/supervisord.conf /etc/supervisord.conf
 RUN chmod 755 /etc/apache2/foreground.sh
 RUN mkdir /var/log/supervisor/ && mkdir /var/run/sshd
 ADD ./configs/000-default.conf /etc/apache2/sites-available/000-default.conf 
+ADD ./configs/000-default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 RUN a2enmod headers
 ADD ./scripts/start.sh /start.sh
-RUN chmod 755 /start.sh
+ADD ./scripts/cli.sh /cli.sh
+RUN chmod 755 /start.sh && chmod 755 /cli.sh
 RUN chmod u+s /usr/bin/sudo
 #
 # add user
@@ -33,4 +35,5 @@ RUN mkdir -p /home/docker &&\
 # footer expose 80 http /22 ssh
 EXPOSE 80
 EXPOSE 22
+EXPOSE 443
 CMD ["/bin/bash", "/start.sh"]
