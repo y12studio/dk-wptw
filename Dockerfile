@@ -5,10 +5,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nano zip curl git mysql-cl
 #
 #  download English/zh_TW version
 # move en-version to /var/www for sed-safety
-RUN rm -rf /var/www/ && wget -q http://wordpress.org/latest.tar.gz -O wordpress-en.tar.gz &&\
+RUN rm -rf /var/wp/ && wget -q http://wordpress.org/latest.tar.gz -O wordpress-en.tar.gz &&\
     wget -q http://tw.wordpress.org/latest-zh_TW.tar.gz -O wordpress.tar.gz &&\
-	tar xvzf /wordpress.tar.gz && mv /wordpress /var/www/ &&\
-	tar xvzf /wordpress-en.tar.gz && mv -f /wordpress/wp-config-sample.php /var/www/ &&\
+	tar xvzf /wordpress.tar.gz && mv /wordpress /var/wp/ &&\
+	tar xvzf /wordpress-en.tar.gz && mv -f /wordpress/wp-config-sample.php /var/wp/ &&\
     rm /wordpress.tar.gz && rm /wordpress-en.tar.gz && rm -rf /wordpress
 RUN easy_install supervisor
 ADD ./scripts/foreground.sh /etc/apache2/foreground.sh

@@ -2,33 +2,54 @@
 if [ $# -lt 1 ]; then
     cat <<EOF
 cli.sh
-runvol <name> : run data cotainer
-run <name> <port> : run data/wp container
+rundata <name> : run the data cotainer
+rmdata <name> : remove the data cotainer
+rm : remove all stop cotainer
+rmi : remove all untag image
+run <container_name> <http_port> <base_img> : run with data-volume container
+cmdssl <img_name> : enable ssl support
 EOF
   exit 0
 fi
-if [ $1 == "runvol" ]; then
+if [ $1 == "rundata" ]; then
     if [ $# -lt 2 ]; then 
-      echo -e "Syntax Error, ex: cli.sh runvol <name>"
+      echo -e "Syntax Error, ex: cli.sh rundata <name>"
       exit 0
     fi
-    echo sudo docker run --name $2-data -v /var/lib/mysql -v /var/www/wordpress/wp-content busybox /bin/true
+	cat <<EOF
+docker run --name $2 -v /var/lib/mysql -v /var/www busybox /bin/true
+docker ps -a | grep -w $2
+EOF
+fi
+if [ $1 == "rmdata" ]; then
+    if [ $# -lt 2 ]; then 
+      echo -e "Syntax Error, ex: cli.sh rmdata <name>"
+      exit 0
+    fi
+	cat <<EOF
+CID=\$(docker ps -a | grep -w '$2' | awk '{print \$1}')
+docker rm \$CID
+docker ps -a | grep -w busybox:latest
+EOF
 fi
 if [ $1 == "run" ]; then
-    if [ $# -lt 3 ]; then 
-      echo -e "Syntax Error, ex: cli.sh run <name> <port>"
+    if [ $# -lt 4 ]; then 
+      echo -e "Syntax Error, ex: cli.sh run <container_name> <http_port> <base_img>"
       exit 0
     fi
     cat <<EOF
-docker run --name $2-data -v /var/lib/mysql -v /var/www/wordpress/wp-content busybox /bin/true && 
-docker run -d -P $3:80 --name $2 --volumes-from $2-data dk-wptw
+echo "create new data container for dk-wptw"
+docker run --name $2-data -v /var/lib/mysql -v /var/www busybox /bin/true
+echo "run dk-wptw with data container"
+docker run -d -p $3:80 --name $2 --volumes-from $2-data $4
+docker ps && docker ps -q | xargs -n 1 docker inspect --format "{{ .Name }} {{ .NetworkSettings.IPAddress }}"
 EOF
 fi
 if [ $1 == "psip" ]; then
     cat <<EOF
 docker ps && docker ps -q | xargs -n 1 docker inspect --format "{{ .Name }} {{ .NetworkSettings.IPAddress }}"
 EOF
-   fi
+fi
 if [ $1 == "rm" ]; then 
    echo 'docker rm $(docker ps -a -q)'
 fi
