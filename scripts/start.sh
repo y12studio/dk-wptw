@@ -8,6 +8,7 @@ if [ ! -f /var/www/wp-config.php ]; then
 # move wordpress into /var/www
 #
 cp -a /var/wp/. /var/www && rm -rf /var/wp
+#
 #mysql has to be started this way as it doesn't work to call from /etc/init.d
 /usr/bin/mysqld_safe &
 sleep 9s
@@ -41,6 +42,10 @@ s/password_here/$WORDPRESS_PASSWORD/
 
 # zh_TW version
 sed -i "s/'WPLANG', ''/'WPLANG', 'zh_TW'/g" /var/www/wp-config.php 
+
+# set permissions for plugin installation without ftp/ftps
+chmod -R 777 /var/www/wp-content 
+sed -i "s/define('WP_DEBUG.*/define('FS_METHOD','direct');\ndefine('FS_CHMOD_DIR', 0777);\ndefine('FS_CHMOD_FILE', 0777);\n&/" /var/www/wp-config.php
 
 chown -R www-data:www-data /var/www
 mysqladmin -u root password $MYSQL_PASSWORD 
