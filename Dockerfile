@@ -25,13 +25,15 @@ RUN chmod u+s /usr/bin/sudo
 #
 # add user
 #
-RUN mkdir -p /home/docker &&\
-   useradd docker &&\
+RUN useradd -m -s /bin/bash docker &&\
    echo "docker:dkwptw2014" | chpasswd &&\
    mkdir -p /home/docker/.ssh; chmod 700 /home/docker/.ssh &&\
-   chown -R docker /home/docker &&\
+   chown -R docker:docker /home/docker &&\
    echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 #
+# http://stackoverflow.com/questions/18173889/cannot-access-centos-sshd-on-docker
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config &&\
+    sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
 # footer expose 80 http /22 ssh
 EXPOSE 80
 EXPOSE 22
