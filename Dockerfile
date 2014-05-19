@@ -1,7 +1,12 @@
 FROM ubuntu:14.04
 MAINTAINER Y12STUDIO <y12studio@gmail.com>
 RUN apt-get update && apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nano zip curl git mysql-client mysql-server apache2 libapache2-mod-php5 pwgen python-setuptools php5-mysql openssh-server sudo php5-ldap php5-curl
+RUN locale-gen zh_TW.UTF-8
+ENV LANG  zh_TW.UTF-8
+ENV LC_ALL  zh_TW.UTF-8
+ENV LANGUAGE zh_TW.UTF-8
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nano zip curl git mysql-client mysql-server apache2 libapache2-mod-php5 pwgen python-setuptools php5-mysql openssh-server sudo php5-ldap php5-curl fonts-wqy*
+
 #
 #  download English/zh_TW version
 # move en-version to /var/www for sed-safety
