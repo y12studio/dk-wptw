@@ -22,7 +22,7 @@ RUN chmod 755 /etc/apache2/foreground.sh
 RUN mkdir /var/log/supervisor/ && mkdir /var/run/sshd
 ADD ./configs/000-default.conf /etc/apache2/sites-available/000-default.conf 
 ADD ./configs/000-default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-RUN a2enmod headers
+RUN a2enmod headers && a2enmod rewrite
 ADD ./scripts/start.sh /start.sh
 ADD ./scripts/cli.sh /cli.sh
 RUN chmod 755 /start.sh && chmod 755 /cli.sh
